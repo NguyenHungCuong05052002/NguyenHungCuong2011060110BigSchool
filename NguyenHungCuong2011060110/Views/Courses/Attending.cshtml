@@ -1,0 +1,16 @@
+﻿@model NguyenHungCuong2011060110.ViewModels.CoursesViewModel
+@{
+    ViewBag.Title = "Attending";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Attending</h2>
+
+<ul class="course">
+    @foreach (var course in Model.UpcommingCourses)
+    {
+        <li>
+            @course.DateTime - @course.Lecturer.Name
+        </li>
+    }
+</ul>

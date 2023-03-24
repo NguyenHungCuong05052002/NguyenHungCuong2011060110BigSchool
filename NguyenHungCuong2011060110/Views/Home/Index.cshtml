@@ -1,10 +1,11 @@
-﻿@{
+﻿@model NguyenHungCuong2011060110.ViewModels.CoursesViewModel
+@{
     ViewBag.Title = "Home Page";
 }
 
 <div class="row">
     <ul>
-        @foreach (var course in Model)
+        @foreach (var course in Model.UpcommingCourses)
         {
             <li>
                 @course.DateTime - @course.Lecturer.Name
@@ -14,10 +15,10 @@
 </div>
 
 <ul class="course">
-    @foreach (var course in Model)
+    @foreach (var course in Model.UpcommingCourses)
     {
         <li >
-            <div style="color:red;border:10px;"; class="date">
+            <div style="color:red;"; class="date">
                 <div class="month">
                     @course.DateTime.ToString("MM")  
                 </div>
@@ -26,14 +27,62 @@
                 </div>
             
                 <div style="margin-left:30px;margin-top:-30px;" class="details">
-                <span class="lecturer">
-                    @course.Lecturer.Name
-                </span>
-                <span class="category">
-                    @course.Category.Name
-                </span>
+                    <span class="lecturer">
+                        @course.Lecturer.Name
+                        @if (Model.ShowAction)
+                        {
+                          <button style="background-color:lavenderblush;" class="btn btn-default btn-sm js-toggle-follow" data-user-id="@course.LecturerId">Follow</button>
+                        }
+                    </span>
+                    <span class="category">
+                        @course.Category.Name
+                        @if (Model.ShowAction)
+                        {
+                           <button style="background-color:lavenderblush;" data-course-id="@course.Id" class="btn btn-default btn-sm js-toggle-attendance">Going</button>
+                        }
+                    </span>       
                 </div>
             </div>
         </li>
     }
 </ul>
+@section scripts
+{
+    <script>
+        $(document).ready(function () {
+            $(".js-toggle-attendance").click(function (e) {
+                var button = $(e.target);
+                $.post("/api/attendances", { courseID; button.attr("data-course-id") })
+                    .done(function () {
+                        button
+                            .removeClass("btn-default")
+                            .addClass("btn-info")
+                            .text("Going");
+                    })
+                    .fail(function () {
+                        alert("Something failed");
+                    });
+            });
+
+
+
+            $(".js-toggle-follow").click(function (e) {
+                var button = $(e.target);
+                $.post("/api/followings", { followeeId ; button.attr("data-course-id") })
+                    .done(function () {
+                        button.text("Following");
+                            
+                    })
+                    .fail(function () {
+                        alert("Something failed");
+                    });
+            });
+        });
+
+
+
+    </script>
+
+
+
+}

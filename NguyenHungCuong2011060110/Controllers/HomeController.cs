@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using System.Data.Entity;
 using System.Web.Configuration;
 using NguyenHungCuong2011060110.Models;
+using NguyenHungCuong2011060110.ViewModels;
 
 namespace NguyenHungCuong2011060110.Controllers
 {
@@ -18,15 +19,18 @@ namespace NguyenHungCuong2011060110.Controllers
             _dbContext = new ApplicationDbContext();
         }
         public ActionResult Index()
-        {
+        {        
+             var upcomingCourses = _dbContext.Courses
+               .Include(c => c.Lecturer)
+               .Include(c => c.Category)
+               .Where(c => c.DateTime > DateTime.Now);
+              
+            var viewModel = new CoursesViewModel
             {
-                var upcomingCourses = _dbContext.Courses
-                    .Include(c => c.Lecturer)
-                    .Include(c => c.Category)
-                    .Where(c => c.DateTime > DateTime.Now);
-                return View(upcomingCourses);
-            }
-
+                UpcommingCourses = upcomingCourses,
+                ShowAction = User.Identity.IsAuthenticated
+            };
+            return View(viewModel);
         }
 
         public ActionResult About()
